@@ -52,7 +52,11 @@ class Node implements Comparable<Node>{
 
     @Override
     public int compareTo(Node o) {
-        return getFreguentie() - o.getFreguentie();
+        int frequentieResult = getFreguentie() - o.getFreguentie();
+        if (frequentieResult == 0)
+            return getCharacter() - o.getCharacter();
+        else
+            return  frequentieResult;
     }
 
     public boolean isCharacterNode() {
