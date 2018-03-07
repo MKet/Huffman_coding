@@ -1,14 +1,12 @@
 package com.company.Huffman;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class HuffTree {
     private Node startingNode;
     private BitSet bitSet;
 
     public HuffTree(String text) {
-        startingNode = new Node();
         Compress(text);
         bitSet = generateBitmap(text);
     }
@@ -17,7 +15,7 @@ public class HuffTree {
         StringBuilder builder = new StringBuilder();
 
         Node currentNode = startingNode;
-        for(int i = 0; i< bitSet.size(); i++) {
+        for(int i = 0; i < bitSet.size(); i++) {
             boolean bit = bitSet.get(i);
 
             if (bit) {
@@ -45,24 +43,17 @@ public class HuffTree {
            queue.add(node);
         });
 
-        Node currentNode = null;
-        while (queue.size() > 2) {
-            Node n = queue.poll();
-            if (currentNode == null)
-                currentNode = n;
-            else {
-                Node next = new Node(currentNode.getFreguentie() + n.getFreguentie());
-                next.setLeftNode(currentNode);
-                next.setRightNode(n);
+        while (!queue.isEmpty()) {
+            Node node1 = queue.poll();
+            Node node2 = queue.poll();
 
+            Node next = new Node(node1, node2);
+
+            if (queue.isEmpty())
+                startingNode = next;
+            else
                 queue.add(next);
-
-                currentNode = null;
-            }
         }
-
-        startingNode.setLeftNode(queue.peek());
-        startingNode.setRightNode(queue.peek());
     }
 
     private Map<Character, Integer> getFrequentie(String text) {
@@ -96,7 +87,7 @@ public class HuffTree {
 
     private BitSet concatenateBitSets(BitSet bits1, BitSet bits2) {
         if (bits1 == null || bits2 == null)
-            return null;
+            throw new IllegalArgumentException("Null not allowed");
         BitSet bits1Clone = (BitSet)bits1.clone();
         BitSet bits2Clone = (BitSet)bits2.clone();
         int n = 5;//_desired length of the first (leading) vector
@@ -113,19 +104,25 @@ public class HuffTree {
     }
 
     private void fillBitmap(HashMap<Character, BitSet> map, Node node, BitSet bits, int index) {
-        if (node.isCharacterNode()) {
-            char character = node.getCharacter();
-            map.put(character, (BitSet) bits.clone());
-            return;
+        try {
+            if (node.isCharacterNode()) {
+                char character = node.getCharacter();
+                map.put(character, (BitSet) bits.clone());
+                return;
+            }
+
+            if (node.getLeftNode() != null) {
+                node = node.getLeftNode();
+                bits.set(index, false);
+                fillBitmap(map, node, bits, index + 1);
+            } else if (node.getRightNode() != null) {
+                node = node.getRightNode();
+                bits.set(index, true);
+                fillBitmap(map, node, bits, index + 1);
+            }
+        } finally {
+            bits.clear(index);
         }
 
-        if (node.getLeftNode() != null) {
-            bits.set(index, false);
-            fillBitmap(map, node, bits, index +1);
-        } else if (node.getRightNode() != null ) {
-            node = node.getRightNode();
-            bits.set(index, true);
-            fillBitmap(map, node, bits, index +1);
-        }
     }
 }

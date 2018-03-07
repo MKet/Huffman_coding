@@ -6,15 +6,21 @@ class Node implements Comparable<Node>{
     private char Character;
     private int Freguentie;
 
-    public Node() { }
-
     public Node(char character, int freguentie) {
         Character = character;
         Freguentie = freguentie;
     }
 
-    public Node(int freguentie) {
-        Freguentie = freguentie;
+    public Node(Node leftNode, Node rightNode) {
+        this.leftNode = leftNode;
+        this.rightNode = rightNode;
+
+        Freguentie = 0;
+        if (leftNode != null)
+            Freguentie = leftNode.Freguentie;
+        if (rightNode != null)
+            Freguentie += rightNode.Freguentie;
+
     }
 
     public Node getLeftNode() {
