@@ -1,12 +1,21 @@
 package com.company.Huffman;
 
-class Node {
+class Node implements Comparable<Node>{
     private Node leftNode;
     private Node rightNode;
     private char Character;
     private int Freguentie;
 
     public Node() { }
+
+    public Node(char character, int freguentie) {
+        Character = character;
+        Freguentie = freguentie;
+    }
+
+    public Node(int freguentie) {
+        Freguentie = freguentie;
+    }
 
     public Node getLeftNode() {
         return leftNode;
@@ -39,5 +48,10 @@ class Node {
 
     public void setFreguentie(int freguentie) {
         Freguentie = freguentie;
+    }
+
+    @Override
+    public int compareTo(Node o) {
+        return getFreguentie() - o.getFreguentie();
     }
 }
