@@ -54,4 +54,8 @@ class Node implements Comparable<Node>{
     public int compareTo(Node o) {
         return getFreguentie() - o.getFreguentie();
     }
+
+    public boolean isCharacterNode() {
+        return leftNode == null && rightNode == null;
+    }
 }
