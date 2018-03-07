@@ -46,7 +46,8 @@ public class HuffTree {
         });
 
         Node currentNode = null;
-        for (Node n : queue) {
+        while (queue.size() > 2) {
+            Node n = queue.poll();
             if (currentNode == null)
                 currentNode = n;
             else {
@@ -54,16 +55,14 @@ public class HuffTree {
                 next.setLeftNode(currentNode);
                 next.setRightNode(n);
 
-                if (queue.size() == 1)
-                    startingNode.setRightNode(next);
-                else if (queue.size() == 0)
-                    startingNode.setLeftNode(next);
-                else
-                    queue.add(next);
+                queue.add(next);
 
                 currentNode = null;
             }
         }
+
+        startingNode.setLeftNode(queue.peek());
+        startingNode.setRightNode(queue.peek());
     }
 
     private Map<Character, Integer> getFrequentie(String text) {
@@ -82,7 +81,7 @@ public class HuffTree {
 
     private BitSet generateBitmap(String text) {
         HashMap<Character, BitSet> map = new HashMap<>();
-        getNextChar(map, startingNode);
+        fillBitmap(map, startingNode);
 
         BitSet encodedText = new BitSet();
 
@@ -109,24 +108,24 @@ public class HuffTree {
         return bits1Clone;
     }
 
-    private void getNextChar(HashMap<Character, BitSet> map, Node node) {
-        getNextChar(map, node, new BitSet(), 0);
+    private void fillBitmap(HashMap<Character, BitSet> map, Node node) {
+        fillBitmap(map, node, new BitSet(), 0);
     }
 
-    private int getNextChar(HashMap<Character, BitSet> map, Node node, BitSet bits, int index) {
-        Node currentNode = node.getLeftNode();
-        bits.set(index, false);
-        if (currentNode.getLeftNode() != null) {
-            index = getNextChar(map, node, bits, index +1);
-        } else if (currentNode.getRightNode() != null ) {
-            currentNode = currentNode.getRightNode();
-            getNextChar(map, currentNode, bits, index +1);
-        } else {
+    private void fillBitmap(HashMap<Character, BitSet> map, Node node, BitSet bits, int index) {
+        if (node.isCharacterNode()) {
             char character = node.getCharacter();
-
-            map.put(character, (BitSet)bits.clone());
+            map.put(character, (BitSet) bits.clone());
+            return;
         }
 
-        return index + -1;
+        if (node.getLeftNode() != null) {
+            bits.set(index, false);
+            fillBitmap(map, node, bits, index +1);
+        } else if (node.getRightNode() != null ) {
+            node = node.getRightNode();
+            bits.set(index, true);
+            fillBitmap(map, node, bits, index +1);
+        }
     }
 }
