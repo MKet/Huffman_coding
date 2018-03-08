@@ -19,9 +19,9 @@ public class HuffTree {
             boolean bit = bitSet.get(i);
 
             if (bit) {
-                currentNode = currentNode.getLeftNode();
-            } else {
                 currentNode = currentNode.getRightNode();
+            } else {
+                currentNode = currentNode.getLeftNode();
             }
 
             if (currentNode.isCharacterNode()) {
@@ -86,8 +86,10 @@ public class HuffTree {
     }
 
     private BitSet concatenateBitSets(BitSet bits1, BitSet bits2) {
-        if (bits1 == null || bits2 == null)
-            throw new IllegalArgumentException("Null not allowed");
+        if (bits1 == null)
+            throw new IllegalArgumentException("Null not allowed. bits1 is null");
+        if (bits2 == null)
+            throw new IllegalArgumentException("Null not allowed. bits2 is null");
         BitSet bits1Clone = (BitSet)bits1.clone();
         BitSet bits2Clone = (BitSet)bits2.clone();
         int n = 5;//_desired length of the first (leading) vector
@@ -108,20 +110,19 @@ public class HuffTree {
             if (node.isCharacterNode()) {
                 char character = node.getCharacter();
                 map.put(character, (BitSet) bits.clone());
-                System.out.print(index);
                 return;
             }
 
             if (node.getLeftNode() != null) {
-                node = node.getLeftNode();
+                Node leftNode = node.getLeftNode();
                 bits.set(index, false);
-                fillBitmap(map, node, bits, index + 1);
+                fillBitmap(map, leftNode, bits, index + 1);
             }
 
             if (node.getRightNode() != null) {
-                node = node.getRightNode();
+                Node rightNode = node.getRightNode();
                 bits.set(index, true);
-                fillBitmap(map, node, bits, index + 1);
+                fillBitmap(map, rightNode, bits, index + 1);
             }
         } finally {
             bits.clear(index);
