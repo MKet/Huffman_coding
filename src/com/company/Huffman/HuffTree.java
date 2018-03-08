@@ -108,6 +108,7 @@ public class HuffTree {
             if (node.isCharacterNode()) {
                 char character = node.getCharacter();
                 map.put(character, (BitSet) bits.clone());
+                System.out.print(index);
                 return;
             }
 
@@ -115,7 +116,9 @@ public class HuffTree {
                 node = node.getLeftNode();
                 bits.set(index, false);
                 fillBitmap(map, node, bits, index + 1);
-            } else if (node.getRightNode() != null) {
+            }
+
+            if (node.getRightNode() != null) {
                 node = node.getRightNode();
                 bits.set(index, true);
                 fillBitmap(map, node, bits, index + 1);
