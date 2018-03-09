@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-	    System.out.println("Give a strrrrrring");
+	    System.out.println("Give a string");
 
         Scanner scanner = new Scanner(System.in);
 
