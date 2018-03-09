@@ -21,5 +21,7 @@ public class Main {
 
         System.out.println(tree.Decompress());
 
+        tree.forEach(System.out::print);
+
     }
 }

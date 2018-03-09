@@ -1,8 +1,9 @@
 package com.company.Huffman;
 
 import java.util.*;
+import java.util.function.Consumer;
 
-public class HuffTree {
+public class HuffTree implements Iterable<Character> {
     private Node startingNode;
     private BitSet bitSet;
     private int textLength;
@@ -91,22 +92,6 @@ public class HuffTree {
         return encodedText;
     }
 
-    private BitSet concatenateBitSets(BitSet bits1, BitSet bits2) {
-        if (bits1 == null)
-            throw new IllegalArgumentException("Null not allowed. bits1 is null");
-        if (bits2 == null)
-            throw new IllegalArgumentException("Null not allowed. bits2 is null");
-        BitSet bits1Clone = (BitSet)bits1.clone();
-        BitSet bits2Clone = (BitSet)bits2.clone();
-        int n = 5;//_desired length of the first (leading) vector
-        int index = -1;
-        while (index < (bits2Clone.length() - 1)) {
-            index = bits2Clone.nextSetBit((index + 1));
-            bits1Clone.set((index + n));
-        }
-        return bits1Clone;
-    }
-
     private void fillBitmap(HashMap<Character, String> map, Node node) {
         fillBitmap(map, node, new StringBuilder(), 0);
     }
@@ -132,5 +117,54 @@ public class HuffTree {
             bits.deleteCharAt(index);
         }
 
+    }
+
+    private class HuffTreeIterator implements  Iterator<Character> {
+        private int i = 0;
+        private int currentCharIndex = 0;
+
+        @Override
+        public boolean hasNext() {
+            return i < bitSet.size() && currentCharIndex < textLength;
+        }
+
+        @Override
+        public Character next() {
+            if (!hasNext())
+                throw new NoSuchElementException();
+            Node currentNode = startingNode;
+            try {
+                while (hasNext()) {
+                    boolean bit = bitSet.get(i);
+                    i++;
+
+                    if (bit) {
+                        currentNode = currentNode.getRightNode();
+                    } else {
+                        currentNode = currentNode.getLeftNode();
+                    }
+
+                    if (currentNode.isCharacterNode()) {
+                        currentCharIndex++;
+                        return currentNode.getCharacter();
+                    }
+                }
+            } catch (IndexOutOfBoundsException e) {
+                throw new NoSuchElementException();
+            }
+            throw new TreeMalformedException();
+        }
+    }
+
+    @Override
+    public Iterator<Character> iterator() {
+        return new HuffTreeIterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super Character> action) {
+        for (char c: this) {
+            action.accept(c);
+        }
     }
 }
