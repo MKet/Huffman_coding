@@ -58,17 +58,17 @@ public class HuffTree implements Iterable<Character>, Serializable {
     }
 
     private BitSet generateBitmap(String text) {
-        HashMap<Character, String> map = new HashMap<>();
+        HashMap<Character, List<Boolean>> map = new HashMap<>();
         fillBitmap(map, startingNode);
 
         BitSet encodedText = new BitSet();
 
         int I = 0;
         for (char w : text.toCharArray()) {
-            String bits = map.get(w);
+            List<Boolean> bits = map.get(w);
 
-            for (Character c : bits.toCharArray()) {
-                encodedText.set(I, c == '1');
+            for (boolean b : bits) {
+                encodedText.set(I, b);
                 I++;
             }
         }
@@ -76,29 +76,29 @@ public class HuffTree implements Iterable<Character>, Serializable {
         return encodedText;
     }
 
-    private void fillBitmap(HashMap<Character, String> map, Node node) {
-        fillBitmap(map, node, new StringBuilder(), 0);
+    private void fillBitmap(HashMap<Character, List<Boolean>> map, Node node) {
+        fillBitmap(map, node,  new ArrayList<>(), 0);
     }
 
-    private void fillBitmap(HashMap<Character, String> map, Node node, StringBuilder bits, int index) {
+    private void fillBitmap(HashMap<Character, List<Boolean>> map, Node node, List<Boolean> bits, int index) {
         if (node.isCharacterNode()) {
             char character = node.getCharacter();
-            map.put(character, bits.toString());
+            map.put(character, new ArrayList<>(bits));
             return;
         }
 
         if (node.getLeftNode() != null) {
             Node leftNode = node.getLeftNode();
-            bits.append('0');
+            bits.add(false);
             fillBitmap(map, leftNode, bits, index + 1);
-            bits.deleteCharAt(index);
+            bits.remove(index);
         }
 
         if (node.getRightNode() != null) {
             Node rightNode = node.getRightNode();
-            bits.append('1');
+            bits.add(true);
             fillBitmap(map, rightNode, bits, index + 1);
-            bits.deleteCharAt(index);
+            bits.remove(index);
         }
 
     }
