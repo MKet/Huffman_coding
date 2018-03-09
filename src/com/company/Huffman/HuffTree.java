@@ -10,8 +10,13 @@ public class HuffTree implements Iterable<Character>, Serializable {
     private int textLength;
 
     public HuffTree(String text) {
-        compress(text);
+        if (text == null)
+            throw new IllegalArgumentException("text cannot be null");
+
         textLength = text.length();
+
+        if (textLength > 0)
+            compress(text);
     }
 
     private void compress(String text) {
@@ -104,7 +109,7 @@ public class HuffTree implements Iterable<Character>, Serializable {
 
         @Override
         public boolean hasNext() {
-            return i < bitSet.size() && currentCharIndex < textLength;
+            return currentCharIndex < textLength && i < bitSet.size();
         }
 
         @Override
