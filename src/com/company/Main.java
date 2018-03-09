@@ -19,7 +19,7 @@ public class Main {
 
         System.out.println("decompression test");
 
-        System.out.println(tree.Decompress());
+        System.out.println(tree.toString());
 
         tree.forEach(System.out::print);
 

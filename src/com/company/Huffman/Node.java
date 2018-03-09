@@ -1,6 +1,8 @@
 package com.company.Huffman;
 
-class Node implements Comparable<Node>{
+import java.io.Serializable;
+
+class Node implements Comparable<Node>, Serializable {
     private Node leftNode;
     private Node rightNode;
     private char Character;

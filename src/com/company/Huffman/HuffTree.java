@@ -1,41 +1,20 @@
 package com.company.Huffman;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class HuffTree implements Iterable<Character> {
+public class HuffTree implements Iterable<Character>, Serializable {
     private Node startingNode;
     private BitSet bitSet;
     private int textLength;
 
     public HuffTree(String text) {
-        Compress(text);
+        compress(text);
         textLength = text.length();
     }
 
-    public String Decompress() {
-        StringBuilder builder = new StringBuilder();
-
-        Node currentNode = startingNode;
-        for(int i = 0; i < bitSet.size(); i++) {
-            boolean bit = bitSet.get(i);
-
-            if (bit) {
-                currentNode = currentNode.getRightNode();
-            } else {
-                currentNode = currentNode.getLeftNode();
-            }
-
-            if (currentNode.isCharacterNode()) {
-                builder.append(currentNode.getCharacter());
-                currentNode = startingNode;
-            }
-        }
-
-        return  builder.substring(0, textLength);
-    }
-
-    private void Compress(String text) {
+    private void compress(String text) {
         Map<Character, Integer> frequentie = getFrequentie(text);
 
         PriorityQueue<Node> queue = new PriorityQueue<>();
@@ -166,5 +145,16 @@ public class HuffTree implements Iterable<Character> {
         for (char c: this) {
             action.accept(c);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        for (char c: this) {
+            builder.append(c);
+        }
+
+        return  builder.toString();
     }
 }
