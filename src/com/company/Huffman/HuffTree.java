@@ -58,49 +58,50 @@ public class HuffTree implements Iterable<Character>, Serializable {
     }
 
     private BitSet generateBitmap(String text) {
-        HashMap<Character, List<Boolean>> map = new HashMap<>();
+        HashMap<Character, CharacterCode> map = new HashMap<>();
         fillBitmap(map, startingNode);
 
         BitSet encodedText = new BitSet();
 
-        int I = 0;
+        int i = 0;
         for (char w : text.toCharArray()) {
-            List<Boolean> bits = map.get(w);
+            CharacterCode code = map.get(w);
+            BitSet bits =  code.getCode();
 
-            for (boolean b : bits) {
-                encodedText.set(I, b);
-                I++;
+            for (int j = 0; j < code.getCodeSize(); j++) {
+                boolean b = bits.get(j);
+                encodedText.set(i, b);
+                i++;
             }
         }
 
         return encodedText;
     }
 
-    private void fillBitmap(HashMap<Character, List<Boolean>> map, Node node) {
-        fillBitmap(map, node,  new ArrayList<>(), 0);
+    private void fillBitmap(HashMap<Character, CharacterCode> map, Node node) {
+        fillBitmap(map, node, new BitSet(), (byte)0);
     }
 
-    private void fillBitmap(HashMap<Character, List<Boolean>> map, Node node, List<Boolean> bits, int index) {
+    private void fillBitmap(HashMap<Character, CharacterCode> map, Node node, BitSet bits, byte index) {
         if (node.isCharacterNode()) {
             char character = node.getCharacter();
-            map.put(character, new ArrayList<>(bits));
+            map.put(character, new CharacterCode(bits, index));
             return;
         }
 
         if (node.getLeftNode() != null) {
             Node leftNode = node.getLeftNode();
-            bits.add(false);
-            fillBitmap(map, leftNode, bits, index + 1);
-            bits.remove(index);
+            bits.set(index, false);
+            fillBitmap(map, leftNode, bits, (byte)(index+1));
+            bits.clear(index);
         }
 
         if (node.getRightNode() != null) {
             Node rightNode = node.getRightNode();
-            bits.add(true);
-            fillBitmap(map, rightNode, bits, index + 1);
-            bits.remove(index);
+            bits.set(index, true);
+            fillBitmap(map, rightNode, bits, (byte)(index+1));
+            bits.clear(index);
         }
-
     }
 
     private class HuffTreeIterator implements  Iterator<Character> {
