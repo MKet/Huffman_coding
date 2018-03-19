@@ -130,7 +130,7 @@ public class HuffmanTest {
 
     @Test
     public void TermsStringToStringTestt() {
-        HuffTree huffTree = new HuffTree(Terms);;
+        HuffTree huffTree = new HuffTree(Terms);
 
         Assert.assertEquals(Terms, huffTree.toString());
     }
